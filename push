@@ -1,0 +1,13 @@
+#!/bin/sh
+# pushes website to github rep
+source .project
+
+git add . > /dev/null
+git commit -a -m 'update'  > /dev/null
+git push > /devnull
+ssh datadriven@vis4.net 'cd $remote_path; git pull'
+
+if [[ $jekyll == 1 ]]
+then ssh datadriven@vis4.net 'cd $remote_path; jekyll'
+fi
+
