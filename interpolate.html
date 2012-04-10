@@ -4,54 +4,54 @@
 	<style>
 	body { overflow:hidden; background: #fff; font-weight:300; font-family: Helvetica Neue, Helvetica, sans-serif; }
 	#w { position: relative; margin: 0 auto; background: #fff; width: 440px;}
-	
+
 	.gradient-prev { height: 45px; clear: both; width: 500px; margin: 0 auto; }
 	.gradient-prev label { width: 30px; text-align:right; float: left; font-size: 14px; margin:13px 10px; text-transform: uppercase; }
-	.gradient-prev .g { width: 50px; height: 45px; float: left; } 
+	.gradient-prev .g { width: 50px; height: 45px; float: left; }
 	.colpick { border: 1px solid #ccc; font-size:14px; margin:0 1ex; width: 9.5ex; text-align:center; font-weight:300; font-family: Helvetica Neue, Helvetica, sans-serif; padding: 3px;}
 	.colpick.err { color: #d22; background: #ffe; }
 	.left { text-align:center; margin: 10px; }
 	</style>
 	<script src="jquery.min.js"></script>
-	<script src="chroma.js"></script>                
+	<script src="chroma.js"></script>
 	<script>
-	
-	
-	
+
+
+
 	$(function() {
-	
-		var 
-		
+
+		var
+
 		fromCol = 'FFFFCC',
 		toCol = '232842',
-		
+
 		setGradient = window.setGradient = function(fcol, tcol) {
 			fromCol = fcol;
 			toCol = tcol;
 			update();
 		};
-		
+
 		update = function() {
 			var i, f, m, mode, c0, c1,
-				cnt = 7, modes = ['csl','hsv','hsl','lab','rgb'];
-			
+				cnt = 7, modes = ['hcl','hsv','hsl','lab','rgb'];
+
 			$('#c0').val((fromCol[0] != '#' ? '#' : '')+fromCol);
 		 	$('#c1').val((toCol[0] != '#' ? '#' : '')+toCol);
-		 		
+
 			c0 = chroma.hex(fromCol);
 			c1 = chroma.hex(toCol);
-			
-			
+
+
 			$('.gradients *').remove();
-			
+
 			for (m in modes) {
 				$('.gradients').append('<div class="gradient-prev '+modes[m]+'"><label>'+modes[m]+'</label></div>');
 			}
-			
+
 			var G = function(col) {
-				return $('<div class="g" style="background:'+col.hex()+'" />');			
+				return $('<div class="g" style="background:'+col.hex()+'" />');
 			};
-			
+
 			for (i=0;i<cnt;i++) {
 				if (i==0) $('.gradient-prev').append(G(c0));
 				else if (i==cnt-1) $('.gradient-prev').append(G(c1));
@@ -60,11 +60,11 @@
 					for (m in modes) {
 						mode = modes[m];
 						$('.gradient-prev.'+mode).append(G(chroma.interpolate(c0,c1,f,mode)));
-					}	
+					}
 				}
 			}
 		},
-		
+
 		chCols = function(evt) {
 			var tgt = $(evt.target), f = tgt.attr('id') == 'c0';
 			if (f) fromCol = tgt.val();
@@ -76,31 +76,31 @@
 				tgt.addClass('err');
 			}
 		};
-		
+
 		$('.colpick').change(chCols);
 		$('.colpick').keyup(chCols);
-		
+
 		update();
-		 
-		 
+
+
 	});
 	</script>
 </head>
 <body>
 <div id="w">
-	
+
 	<div class="left">
 		<input id="c0" class="colpick" /> ---&gt;
 		<input id="c1" class="colpick" />
 	</div>
 	<div class="right">
-		
+
 	</div>
-	
-	
+
+
 	<div class="gradients"></div>
 	<div style="clear:both">&nbsp;</div>
-	
+
 </div>
 </body>
 </html>
