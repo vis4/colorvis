@@ -1,0 +1,81 @@
+﻿<html>
+<head>
+	<title>colorvis</title>
+	<style>
+	body { overflow:hidden; background: #fff; font-family: Helvetica Neue, Helvetica, sans-serif; }
+	#w { position: relative; margin: 0 auto; width: 510px;}
+	
+	h1 { margin: 5px 0 10px 10px; font-size: 20px; font-weight: 300;  }
+	h1 em { font-weight: bold; font-style: normal; }
+	
+	.axis-select { position: absolute; top: 8px; right: 95px; }
+	.axis-select a { 
+		font-weight: 300; font-size: 12px; padding-left: 1em; 
+		text-decoration: none; color: #800; text-transform: uppercase; }
+	.axis-select a.sel { font-weight: bold; color: #000; }
+	
+	.z-axis-label { 
+		text-transform: uppercase;
+		position: absolute; top:-27px; left: -5px; 
+		width:20px; text-align:center;
+		font-weight: bold; font-size: 12px; }
+	
+	.ui-slider-handle { text-decoration: none; }
+	#sl-val { white-space:nowrap; position: absolute; left: 28px; top: 2px; text-decoration: none!important; font-size: 13px; font-weight: 300; }
+	#sl-z { height:420px;margin-top:0px; }
+	.panel { position: relative; width: 600px; margin-left: 10px; }
+	.top { margin: 10px 0;}
+	#grad, #colorscale, #bg { position: absolute; left:0; top:0; height:420px; }
+	#grad { left:-10px;top:-10px; z-index: 20; height:440px; width:440px; }
+	#bg{ left: 0px; position: relative; width: 420px; z-index:0; background:url(bg.png) }
+	.drag_cont {
+		position: absolute; z-index: 50; left:-10px; top:-10px; width: 440px; height:440px;
+	}
+	#colorspace { width:420px;height:420px }
+	.gradient-prev { margin: 10px auto; width: 350px; }
+	.gradient-prev .g { width: 50px; height: 45px; float: left; } 
+	.drag { position: absolute; width:10px; height:10px; top:0;left:0; cursor:pointer; }
+	.panel .right { position: absolute; left: 440px; top:0 }
+	
+	</style>
+	<script src="jquery.min.js"></script>
+	<script src="jquery-ui-1.8.16.custom.min.js"></script>
+	<link rel="stylesheet" href="jquery-ui-1.8.16.custom.css" />
+	<script src="chroma.js"></script>
+
+	<script>
+
+	$.extend({
+		getUrlVars: function() {
+			var vars = {},
+			parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) { vars[key] = value; });
+			return vars;
+		}
+	});
+
+
+	
+	</script>
+	<script src="colorvis.js"></script>
+</head>
+<body>
+<div id="w">
+	<div class="axis-select"></div><h1></h1>
+	<div class="panel">
+		<div id="bg">
+			<canvas id="colorspace" width="210" height="210"></canvas>
+		</div>
+		<canvas id="grad" width="440" height="440"></canvas>
+		<div class="drag_cont">
+			<div class="drag from"></div>
+			<div class="drag to"></div>
+		</div>
+		<div class="right">
+			<div class="z-axis-label">S</div>
+			<div id="sl-z" style=""></div>
+		</div>
+	</div>
+	<div class="gradient-prev"></div>
+</div>
+</body>
+</html>
