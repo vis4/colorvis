@@ -169,7 +169,6 @@ $(function() {
 				xv = xdim[2] + (x/sq)*(xdim[3]-xdim[2]);
 				yv = ydim[2] + (y/sq)*(ydim[3]-ydim[2]);
 
-				console.log(xv, yv);
 				color = getColor(xv, yv).rgb;
 
 				if (isNaN(color[0])) {
