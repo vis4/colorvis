@@ -6,7 +6,7 @@ git add . > /dev/null
 git commit -a -m 'update'  > /dev/null
 git push > /devnull
 echo "cd $remote_path; git pull;"
-ssh datadriven@vis4.net "cd $remote_path; git pull;"
+ssh datadriven@vis4.net "cd $remote_path; pwd; git pull;"
 
 if [[ $jekyll == 1 ]]
 then ssh datadriven@vis4.net 'cd $remote_path; jekyll'
