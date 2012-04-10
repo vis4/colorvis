@@ -1,9 +1,9 @@
 /**
 	renders sections of different color spaces as squares
- 
+
 */
 
-	
+
 function getParentFunction(funcName) {
 	var func = null;
 	// Child opened in new window e.g. target="blank"
@@ -16,7 +16,7 @@ function getParentFunction(funcName) {
 	}
 	if (!(func)) {
 		// throw new Error("function \""+funcName+"\" is not in parent window.");
-		return function() {}
+		return function() {};
 	}
 	return func;
 }
@@ -24,13 +24,13 @@ function getParentFunction(funcName) {
 var updateGradient = getParentFunction("pUpdateGradient");
 
 $(function() {
-	
+
 	var getctx = function(id) {
 		return document.getElementById(id).getContext('2d');
 	},
-	
+
 	Color = chroma.Color,
-	
+
 	config = {
 		sq: 210,
 		scale: 2,
@@ -38,27 +38,27 @@ $(function() {
 		x: '',
 		y: '',
 		z: '',
-		zval: .5,
-		gradients: $.getUrlVars()['gradients'] !== undefined 
+		zval: 0.5,
+		gradients: $.getUrlVars()['gradients'] !== undefined
 	},
-	
+
 	changeMode = function(mode) {
 		config.mode = mode;
 		$('#sx option').remove();
 		$('#sy option').remove();
-		
+
 		var dim, sx = $('#sx'), sy = $('#sy');
 		var modeopt = colorspaces[mode], i;
-		
+
 		$('h1').html(modeopt.title);
-		
+
 		for (i=0; i<modeopt.dimensions.length; i++) {
 			dim = modeopt.dimensions[i];
 			sx.append('<option value="'+dim[0]+'">'+dim[1]+'</option>');
 			sy.append('<option value="'+dim[0]+'">'+dim[1]+'</option>');
 		}
 		config.opt = modeopt;
-		
+
 		$('.axis-select a').remove();
 		for (i=0; i<modeopt.axis.length; i++) {
 			var ax = modeopt.axis[i];
@@ -67,41 +67,41 @@ $(function() {
 		}
 		$('.axis-select a').click(changeAxisClick);
 	},
-	
+
 	changeAxisClick = function(ev) {
 		updateAxis($(ev.target).data('axis'));
 		return false;
 	},
-	
+
 	colorspaces = {
-		'hsv': { 
+		'hsv': {
 			dimensions: [
-				['h','hue',0,360,0], 
+				['h','hue',0,360,0],
 				['s','saturation',0,1,1],
 				['v','value',0,1,1]],
 			title: '<em>H</em>ue <em>S</em>aturation <em>V</em>alue',
 			info: '',
 			axis: ['hvs','svh','hsv']
 		},
-		'hsl': { 
+		'hsl': {
 			dimensions: [
 				['h','hue',0,360,0],
 				['s','saturation',0,1,1],
-				['l','lightness',0,1,.5]],
+				['l','lightness',0,1,0.5]],
 			title: '<em>H</em>ue <em>S</em>aturation <em>L</em>ightness',
 			info: '',
-			axis: ['hls','slh','hsl']		
+			axis: ['hls','slh','hsl']
 		},
-		'hsi': { 
+		'hsi': {
 			dimensions: [
 				['h','hue',0,360,0],
 				['s','saturation',0,1,1],
-				['i','intensity',0,1,.5]],
+				['i','intensity',0,1,0.5]],
 			title: '<em>H</em>ue <em>S</em>aturation <em>I</em>ntensity',
 			info: '',
-			axis: ['his','sih','hsi']		
+			axis: ['his','sih','hsi']
 		},
-		'rgb': { 
+		'rgb': {
 			dimensions: [
 				['r','red',0,255,0],
 				['g','green',0,255,0],
@@ -110,67 +110,68 @@ $(function() {
 			info: '',
 			axis: ['rgb','rbg','gbr']
 		},
-		'lab': { 
+		'lab': {
 			dimensions: [
-				['l','lightness',0,1.1, .5],
-				['a','a',-1,1.5,.5],
-				['b','b',-1.8,1.5,.5]],
+				['l','lightness',0,1.1, 0.5],
+				['a','a',-1,1.5,0.5],
+				['b','b',-1.8,1.5,0.5]],
 			title: 'CIE <em>L*a*b*</em>',
 			info: 'Implementation taken from <a href="http://davidad.net/colorviz/">David Dalrymple</a>',
 			axis: ['abl', 'lab', 'lba']
 		},
-		'hcl': { 
+		'hcl': {
 			dimensions: [
 				['h','hue',0,360,0],
 				['c','chroma',0,5,1],
-				['l','lightness',0,1.7,.6]],
-			title: '<em>H</em>hue <em>C</em>hroma <em>L</em>ightness',
+				['l','lightness',0,1.7,0.6]],
+			title: '<em>H</em>ue <em>C</em>hroma <em>L</em>ightness',
 			info: 'Implementation taken from <a href="http://davidad.net/colorviz/">David Dalrymple</a>',
 			axis: ['hlc','clh','hcl']
 		}
 	},
-	
+
 	getColor = function(x,y) {
-		var 
+		var
 		xyz = [],
-		dx = config.dx, 
-		dy = config.dy, 
+		dx = config.dx,
+		dy = config.dy,
 		dz = config.dz;
-		
+
 		xyz[dx] = x;
 		xyz[dy] = y;
 		xyz[dz] = config.zval;
-		
+
 		return new Color(xyz, config.mode);
 	},
-	
+
 	bgimg,
-	
+
 	renderColorSpace = function() {
-		var x,y,xv,xv,color,idx,xyz,
-			dx = config.dx, dy = config.dy, 
+		var x,y,xv,color,idx,xyz,
+			dx = config.dx, dy = config.dy,
 			i,dim,xdim = config.xdim,ydim=config.ydim,
 			sq = config.sq, ctx = getctx('colorspace'),
-			imdata = ctx.createImageData(sq,sq);			
-		
+			imdata = ctx.createImageData(sq,sq);
+
 		/*if (bgimg == null) {
 			bgimg = new Image();
 			bgimg.src = 'bg.png';
 			bg.onload = renderColorSpace;
 			return;
 		}
-		
+
 		ctx.drawImage(bgimg,0,0);
 		*/
 		for (x=0; x<sq; x++) {
 			for (y=0; y<sq; y++) {
-				
+
 				idx = (x+y*imdata.width)*4;
 				xv = xdim[2] + (x/sq)*(xdim[3]-xdim[2]);
 				yv = ydim[2] + (y/sq)*(ydim[3]-ydim[2]);
 
+				console.log(xv, yv);
 				color = getColor(xv, yv).rgb;
-				
+
 				if (isNaN(color[0])) {
 					imdata.data[idx] = 255;
 					imdata.data[idx+1] = 0;
@@ -187,19 +188,19 @@ $(function() {
 		ctx.putImageData(imdata, 0,0);
 		if (config.gradients) showGradient();
 	},
-	
-	
+
+
 	updateAxis = function(axis) {
-	
+
 		config.x = axis[0];
 		config.y = axis[1];
 		config.z = axis[2];
-		
+
 		$('.axis-select a').removeClass('sel');
 		$('.axis-select').find('[data-axis="'+axis+'"]').addClass('sel');
-		
+
 		$('.z-axis-label').html(axis[2]);
-		
+
 		for (var i=0; i<config.opt.dimensions.length; i++) {
 			var dim = config.opt.dimensions[i];
 			if (dim[0] == config.x) {
@@ -216,90 +217,90 @@ $(function() {
 		$( "#sl-z" ).slider({
 			min: config.zdim[2],
 			max: config.zdim[3],
-			step: config.zdim[3] > 99 ? 1 : .01,
+			step: config.zdim[3] > 99 ? 1 : 0.01,
 			value: config.zdim[4]
 		});
 		config.zval = config.zdim[4];
 		$('label[for=val-z]').html(config.zdim[1]);
 		renderColorSpace();
-		
+
 		if (config.gradients) resetGradient();
-		$( "#sl-val" ).html( $( "#sl-z" ).slider( "value" ) );	
+		$( "#sl-val" ).html( $( "#sl-z" ).slider( "value" ) );
 
 	},
-	
+
 	setView = function(mode, axis) {
 		changeMode(mode);
 		updateAxis(axis);
 	},
-	
+
 	updateSlideValPos = function() {
-		$('#sl-val').css({top: ($( "#sl-z .ui-slider-handle" ).position().top+7) + 'px' });		
+		$('#sl-val').css({top: ($( "#sl-z .ui-slider-handle" ).position().top+7) + 'px' });
 	};
-	
-	
+
+
 	window.setView = setView;
-	
-	
+
+
 	$( "#sl-z" ).slider({
 		orientation: "vertical",
 		range: "min",
-		step: .01,
-		value: .5,
+		step: 0.01,
+		value: 0.5,
 		slide: function( event, ui ) {
 			$( "#sl-val" ).html( ui.value );
 			config.zval = ui.value;
 			renderColorSpace();
 		}
 	});
-	
+
 	$('#sl-z .ui-slider-handle').append('<div id="sl-val" />');
-	
+
 	if (config.gradients) {
-		
+
 		var gradient = {
 			from: [0,1], //x,y
-			to: [1,.5], //x,y
+			to: [1,0.5], //x,y
 			steps: $.getUrlVars()['gradients'],
 			handlesize: 10
 		},
-		
+
 		resetGradient = function() {
 			gradient.from[0] = config.xdim[2] + (config.xdim[3]-config.xdim[2]) * (23/36);
-			gradient.from[1] = config.ydim[2] + (config.ydim[3]-config.ydim[2]) * .1;
+			gradient.from[1] = config.ydim[2] + (config.ydim[3]-config.ydim[2]) * 0.1;
 			gradient.to[0] = config.xdim[2] + (config.xdim[3]-config.xdim[2]) * (8/36);
-			gradient.to[1] = config.ydim[2] + (config.ydim[3]-config.ydim[2]) * .8;
-			
+			gradient.to[1] = config.ydim[2] + (config.ydim[3]-config.ydim[2]) * 0.8;
+
 			showGradient();
 		},
-		
+
 		showGradient = function() {
 			// draw line
-			var 
+			var
 			colors = [], col_f, col_t, col,
-			toX = function(v, dim) { 
-				return Math.round((v - dim[2])/(dim[3]-dim[2])*config.sq*config.scale)-.5 
+			toX = function(v, dim) {
+				return Math.round((v - dim[2])/(dim[3]-dim[2])*config.sq*config.scale)-0.5;
 			},
-			a = gradient.handlesize, b = Math.floor(gradient.handlesize*.65), i, fx, fy, x, y,
-					
+			a = gradient.handlesize, b = Math.floor(gradient.handlesize*0.65), i, fx, fy, x, y,
+
 			x0 = toX(gradient.from[0], config.xdim)+10,
 			x1 = toX(gradient.to[0], config.xdim)+10,
 			y0 = toX(gradient.from[1], config.ydim)+10,
 			y1 = toX(gradient.to[1], config.ydim)+10,
 			ctx = getctx('grad');
-			
+
 			ctx.clearRect(0,0,600,600);
-			
+
 			$('.drag.from').css({ width: (a*2)+'px', height: (a*2)+'px', left: (x0-a)+'px', top: (y0-a)+'px' });
 			$('.drag.to').css({ width: (a*2)+'px', height: (a*2)+'px', left: (x1-a)+'px', top: (y1-a)+'px' });
-			
-			
+
+
 			ctx.beginPath();
 			ctx.strokeStyle='rgba(255,255,255,.75)';
 			ctx.moveTo(x0,y0);
 			ctx.lineTo(x1,y1);
-			ctx.stroke();	
-			
+			ctx.stroke();
+
 			ctx.beginPath();
 			ctx.strokeStyle='#fff';
 			col_f = getColor(gradient.from[0],gradient.from[1]).hex();
@@ -307,25 +308,25 @@ $(function() {
 			ctx.rect(x0-a,y0-a,a*2,a*2);
 			ctx.fill();
 			ctx.stroke();
-			
+
 			ctx.beginPath();
 			col_t = getColor(gradient.to[0],gradient.to[1]).hex();
 			ctx.fillStyle= col_t;
 			ctx.rect(x1-a,y1-a,a*2,a*2);
 			ctx.fill();
 			ctx.stroke();
-			
-			if (type(updateGradient) == "function") 
+
+			if (type(updateGradient) == "function")
 				updateGradient(col_f, col_t);
-			
+
 			colors.push(col_f);
-			
+
 			for (i=1; i<gradient.steps-1; i++) {
 				fx = gradient.from[0] + (i/(gradient.steps-1)) * (gradient.to[0]-gradient.from[0]);
 				fy = gradient.from[1] + (i/(gradient.steps-1)) * (gradient.to[1]-gradient.from[1]);
 				x = toX(fx, config.xdim)+10;
 				y = toX(fy, config.ydim)+10;
-				
+
 				ctx.beginPath();
 				ctx.strokeStyle='rgba(255,255,255,.5)';
 				col = getColor(fx,fy).hex();
@@ -336,31 +337,31 @@ $(function() {
 				ctx.stroke();
 			}
 			colors.push(col_t);
-			
+
 			$('.gradient-prev .g').remove();
 			for (i=0; i<colors.length; i++) {
 				var g = $('<div class="g" />');
 				g.css({ background: colors[i] });
 				$('.gradient-prev').append(g);
 			}
-			
-			
-			
+
+
+
 		};
-		
-		$( ".drag" ).draggable({ 
+
+		$( ".drag" ).draggable({
 			containment: 'parent',
-			drag: function(event, ui) { 
+			drag: function(event, ui) {
 				var from = $(event.target).hasClass('from'),
 					x = ui.position.left + gradient.handlesize-10,
 					y = ui.position.top + gradient.handlesize-10,
 					xv = x / (config.sq*config.scale) * (config.xdim[3]-config.xdim[2]) + config.xdim[2],
 					yv = y / (config.sq*config.scale) * (config.ydim[3]-config.ydim[2]) + config.ydim[2];
-				
+
 				xv = Math.min(config.xdim[3], Math.max(config.xdim[2], xv));
 				yv = Math.min(config.ydim[3], Math.max(config.ydim[2], yv));
-			
-				
+
+
 				if (from) {
 					gradient.from = [xv,yv];
 				} else {
@@ -370,14 +371,14 @@ $(function() {
 			}
 		});
 	}
-	
-	
+
+
 	var mode = $.getUrlVars()['m'] || 'lab',
 		axis = $.getUrlVars()['axis'] || colorspaces[mode].axis[0];
-	
+
 	setView(mode, axis);
-	
+
 	if (config.gradients) showGradient();
-	
+
 
 });
